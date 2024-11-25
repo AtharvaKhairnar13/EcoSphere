@@ -4,5 +4,14 @@
     "react-redux": "^9.1.2",
     "react-simple-maps": "^3.0.0",
     "yup": "^1.4.0"
+  },
+  "scripts": {
+    "start": "concurrently \"npm:frontend\" \"npm:backend\" \"npm:json-server\"",
+    "frontend": "npm --prefix frontend run dev",
+    "backend": "npm --prefix backend start",
+    "json-server": "npx json-server frontend/src/components/EcoPolicy/db.json --port 4000"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
   }
 }

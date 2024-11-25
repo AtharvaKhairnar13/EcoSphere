@@ -1,0 +1,19 @@
+/* CalendarHeatmapStyles.css */
+
+/* Style for the weekday labels */
+.react-calendar-heatmap .weekday-label {
+  font-size: 0.75rem; /* Tailwind equivalent: text-xs */
+  fill: #4a5568; /* Tailwind equivalent: text-gray-600 */
+}
+
+/* Style for the month labels */
+.react-calendar-heatmap .month-label {
+  font-size: 0.875rem; /* Tailwind equivalent: text-sm */
+  font-weight: 500; /* Tailwind equivalent: font-medium */
+  fill: #2d3748; /* Tailwind equivalent: text-gray-800 */
+}
+
+/* Style for heatmap squares */
+.react-calendar-heatmap .color-empty {
+  fill: #edf2f7; /* Tailwind equivalent: bg-gray-100 */
+}

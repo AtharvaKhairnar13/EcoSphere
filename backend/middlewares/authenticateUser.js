@@ -8,14 +8,16 @@ const authenticateUser = asyncHandler(async (req, res, next) => {
   if (token) {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-
+      console.log("Decoded token:", decoded);
       const user = await User.findById(decoded.userId);
       if (!user.verified) {
         return res
           .status(401)
           .json({ error: "Email is not verified.Please verify your email!" });
       }
-      req.user = user;
+      req.user = user
+      req.userEmail = user.email;
+      console.log("hiaehfiahe" , user);
 
       next();
     } catch (error) {

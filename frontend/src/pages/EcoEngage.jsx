@@ -18,6 +18,7 @@ import DashboardCard11 from '../partials/dashboard/DashboardCard11';
 import DashboardCard12 from '../partials/dashboard/DashboardCard12';
 import DashboardCard13 from '../partials/dashboard/DashboardCard13';
 import Banner from '../partials/Banner';
+import { HorizontalCard } from '../components/HorizontalCardPulse'; 
 
 const EcoEngage = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -44,7 +45,10 @@ const EcoEngage = () => {
                 <div className="mb-4 sm:mb-0">
                   <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">EcoEngage</h1>
                 </div>
-  
+                <div className="grid grid-cols-12 gap-6">
+
+                  
+                </div>
                 
   
               </div>

@@ -68,59 +68,39 @@ function App() {
           <Route exact path="/signin" element={<SignIn />} />
         </Route>
         {/* Home Route */}
-        <Route path="/" element={<ProtectedRoutes />}>
-        <Route exact path="/dashboard" element={<Dashboard />}>
-          <Route exact path="/dashboard/eco-stats/carbon" element={<EcoStatCarbon />} />
-          <Route exact path="/dashboard/eco-stats/energy" element={<EcoStatEnergy />} />
-          <Route exact path="/dashboard/eco-stats/air-quality" element={<EcoStatAir />} />
-          <Route exact path="/dashboard/eco-stats/water-usage" element={<EcoStatWater />} />
-          <Route exact path="/dashboard/eco-stats/biodiversity" element={<EcoStatBiodiversity />} />
-          <Route exact path="/dashboard/eco-stats/waste-management" element={<EcoStatWaste/>} />
-          <Route exact path="/dashboard/eco-stats/mobility" element={<EcoStatMobility />} />
-          <Route exact path="/dashboard/eco-stats/agriculture" element={<EcoAgri />} />
-          <Route exact path="/dashboard/eco-stats/economy" element={<EcoEconomy />} />
+        <Route path="/dashboard" element={<ProtectedRoutes />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard/eco-learn" element={<EcoLearn />} />
+          <Route path="/dashboard/eco-lab" element={<EcoLab />} />
+          <Route path="/dashboard/eco-lab/details" element={<DetailPage />} />
+          <Route path="/dashboard/eco-games" element={<EcoGames />} />
+          <Route path="/dashboard/eco-games/details" element={<GameDetailPage />} />
+          <Route path="/dashboard/eco-pulse" element={<EcoPulse />} />
+          <Route path="/dashboard/eco-engage" element={<EcoEngage />} />
+          <Route path="/dashboard/eco-tracker" element={<EcoTrackerHome />} />
+          <Route path="/dashboard/eco-tracker/home" element={<EcoTrackerHome />} />
+          <Route path="/dashboard/eco-tracker/waste" element={<EcoTrackerWaste />} />
+          <Route path="/dashboard/eco-tracker/food" element={<EcoTrackerFood />} />
+          <Route path="/dashboard/eco-tracker/transport" element={<EcoTrackerTransport />} />
+          <Route path="/dashboard/eco-tracker/energy" element={<EcoTrackerEnergy />} />
+          <Route path="/dashboard/eco-tracker/water" element={<EcoTrackerWater />} />
+          <Route path="/dashboard/eco-tracker/products" element={<EcoTrackerProduct />} />
+          <Route path="/dashboard/eco-tracker/digital" element={<EcoTrackerDigital />} />
+          <Route path="/dashboard/eco-bot" element={<EcoBot />} />
+          <Route path="/dashboard/eco-policy" element={<EcoPolicy />} />
+          <Route path="/dashboard/eco-guide" element={<EcoGuide />} />
+          <Route path="/dashboard/eco-guide/all-articles" element={<AllArticles />} />
+          <Route path="/dashboard/eco-guide/blog" element={<BlogArticles />} />
+          <Route path="/dashboard/eco-stats/carbon" element={<EcoStatCarbon />} />
+          <Route path="/dashboard/eco-stats/energy" element={<EcoStatEnergy />} />
+          <Route path="/dashboard/eco-stats/air-quality" element={<EcoStatAir />} />
+          <Route path="/dashboard/eco-stats/water-usage" element={<EcoStatWater />} />
+          <Route path="/dashboard/eco-stats/biodiversity" element={<EcoStatBiodiversity />} />
+          <Route path="/dashboard/eco-stats/waste-management" element={<EcoStatWaste />} />
+          <Route path="/dashboard/eco-stats/mobility" element={<EcoStatMobility />} />
+          <Route path="/dashboard/eco-stats/agriculture" element={<EcoAgri />} />
+          <Route path="/dashboard/eco-stats/economy" element={<EcoEconomy />} />
         </Route>
-        
-        {/* EcoLearn */}
-        <Route path="/dashboard/eco-learn" element={<EcoLearn />} />
-        
-        {/* EcoLab */}
-        <Route path="/dashboard/eco-lab" element={<EcoLab />} />
-        <Route path="/dashboard/eco-lab/details" element={<DetailPage />} />
-
-        {/* EcoGames */}
-        <Route path="/dashboard/eco-games" element={<EcoGames />} />
-        <Route path="/dashboard/eco-games/details" element={<GameDetailPage />} />
-
-        {/* EcoPulse */}
-        <Route path="/dashboard/eco-pulse" element={<EcoPulse />} />
-        
-        {/* EcoEngage */}
-        <Route path="/dashboard/eco-engage" element={<EcoEngage />} />
-        
-        {/* EcoTracker */}
-        <Route path="/dashboard/eco-tracker" element={<EcoTrackerHome />} />
-        <Route path="/dashboard/eco-tracker/home" element={<EcoTrackerHome />} />
-        <Route path="/dashboard/eco-tracker/waste" element={<EcoTrackerWaste />} />
-        <Route path="/dashboard/eco-tracker/food" element={<EcoTrackerFood />} />
-        <Route path="/dashboard/eco-tracker/transport" element={<EcoTrackerTransport />} />
-        <Route path="/dashboard/eco-tracker/energy" element={<EcoTrackerEnergy />} />
-        <Route path="/dashboard/eco-tracker/water" element={<EcoTrackerWater />} />
-        <Route path="/dashboard/eco-tracker/products" element={<EcoTrackerProduct />} />
-        <Route path="/dashboard/eco-tracker/digital" element={<EcoTrackerDigital />} />
-
-        
-        {/* EcoBot */}
-        <Route path="/dashboard/eco-bot" element={<EcoBot />} />
-        
-        {/* EcoPolicy */}
-        <Route path="/dashboard/eco-policy" element={<EcoPolicy />} />
-        
-        {/* EcoGuide */}
-        <Route path="/dashboard/eco-guide" element={<EcoGuide />} />
-        <Route path="/dashboard/eco-guide/all-articles" element={< AllArticles/>} />
-        <Route exact path="/dashboard/eco-guide/blog" element={<BlogArticles/>} />
-      </Route>
       <Route path="*" element={<NotFound />} />
       </Routes>
     </>

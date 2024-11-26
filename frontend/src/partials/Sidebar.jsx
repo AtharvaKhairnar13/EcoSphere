@@ -173,7 +173,7 @@ function Sidebar({
                       <Link
                       to="/dashboard/eco-tracker/home" // Use `to` for routing to the EcoLab page
                       className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
-                        pathname.includes("eco-tracker/home")
+                        pathname.includes("/eco-tracker/home")
                           ? "text-black-500"
                           : "hover:text-gray-900 dark:hover:text-white"
                       }`}
@@ -261,7 +261,7 @@ function Sidebar({
 
 
 
-              <SidebarLinkGroup activecondition={pathname.includes("/dashboard/eco-lab")}>
+              <SidebarLinkGroup activecondition={pathname.includes("/eco-lab")}>
                 {(handleClick, open) => (
                   <React.Fragment>
                     <Link
@@ -302,7 +302,7 @@ function Sidebar({
                 )}
               </SidebarLinkGroup>
 
-              <SidebarLinkGroup activecondition={pathname.includes("/dashboard/eco-games")}>
+              <SidebarLinkGroup activecondition={pathname.includes("/eco-games")}>
                 {(handleClick, open) => (
                     <React.Fragment>
                       <Link
@@ -359,7 +359,7 @@ function Sidebar({
                       <Link
                       to="/dashboard/eco-pulse" // Use `to` for routing to the EcoLab page
                       className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
-                        pathname.includes("/dashboard/eco-pulse")
+                        pathname.includes("/eco-pulse")
                           ? "text-black-500"
                           : "hover:text-gray-900 dark:hover:text-white"
                       }`}
@@ -396,11 +396,11 @@ function Sidebar({
                 }
               </SidebarLinkGroup>
               {/* Job Board */}
-              <SidebarLinkGroup activecondition={pathname.includes("/dashboard/eco-engage")}>
+              <SidebarLinkGroup activecondition={pathname.includes("/eco-engage")}>
                 {(handleClick, open) => (
                     <React.Fragment>
                     <Link
-                    to="/dashboard/eco-engage" // Use `to` for routing to the EcoLab page
+                    to="/dasboard/eco-engage" // Use `to` for routing to the EcoLab page
                     className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
                       pathname.includes("/eco-engage")
                         ? "text-black-500"
@@ -464,7 +464,7 @@ function Sidebar({
                             {/* <svg className={`shrink-0 fill-current ${pathname.includes('tasks') ? 'text-violet-500' : 'text-gray-400 dark:text-gray-500'}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                               <path d="M7.586 9H1a1 1 0 1 1 0-2h6.586L6.293 5.707a1 1 0 0 1 1.414-1.414l3 3a1 1 0 0 1 0 1.414l-3 3a1 1 0 1 1-1.414-1.414L7.586 9ZM3.075 4.572a1 1 0 1 1-1.64-1.144 8 8 0 1 1 0 9.144 1 1 0 0 1 1.64-1.144 6 6 0 1 0 0-6.856Z" />
                             </svg> */}
-                            <svg className={`shrink-0 fill-current ${pathname.includes('/dashboard/eco-bot') ? 'text-green-500' : 'text-gray-400 dark:text-gray-500'}`} xmlns="http://www.w3.org/2000/svg" width="20" height="25" viewBox="0 0 640 512">
+                            <svg className={`shrink-0 fill-current ${pathname.includes('/eco-bot') ? 'text-green-500' : 'text-gray-400 dark:text-gray-500'}`} xmlns="http://www.w3.org/2000/svg" width="20" height="25" viewBox="0 0 640 512">
                               <path d="M320 0c17.7 0 32 14.3 32 32l0 64 120 0c39.8 0 72 32.2 72 72l0 272c0 39.8-32.2 72-72 72l-304 0c-39.8 0-72-32.2-72-72l0-272c0-39.8 32.2-72 72-72l120 0 0-64c0-17.7 14.3-32 32-32zM208 384c-8.8 0-16 7.2-16 16s7.2 16 16 16l32 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-32 0zm96 0c-8.8 0-16 7.2-16 16s7.2 16 16 16l32 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-32 0zm96 0c-8.8 0-16 7.2-16 16s7.2 16 16 16l32 0c8.8 0 16-7.2 16-16s-7.2-16-16-16l-32 0zM264 256a40 40 0 1 0 -80 0 40 40 0 1 0 80 0zm152 40a40 40 0 1 0 0-80 40 40 0 1 0 0 80zM48 224l16 0 0 192-16 0c-26.5 0-48-21.5-48-48l0-96c0-26.5 21.5-48 48-48zm544 0c26.5 0 48 21.5 48 48l0 96c0 26.5-21.5 48-48 48l-16 0 0-192 16 0z" />
                             </svg>
 
@@ -498,7 +498,7 @@ function Sidebar({
                             {/* <svg className={`shrink-0 fill-current ${pathname.includes('tasks') ? 'text-violet-500' : 'text-gray-400 dark:text-gray-500'}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                               <path d="M7.586 9H1a1 1 0 1 1 0-2h6.586L6.293 5.707a1 1 0 0 1 1.414-1.414l3 3a1 1 0 0 1 0 1.414l-3 3a1 1 0 1 1-1.414-1.414L7.586 9ZM3.075 4.572a1 1 0 1 1-1.64-1.144 8 8 0 1 1 0 9.144 1 1 0 0 1 1.64-1.144 6 6 0 1 0 0-6.856Z" />
                             </svg> */}
-                            <svg className={`shrink-0 fill-current ${pathname.includes('/dashboard/eco-policy') ? 'text-green-500' : 'text-gray-400 dark:text-gray-500'}`} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16">
+                            <svg className={`shrink-0 fill-current ${pathname.includes('/eco-policy') ? 'text-green-500' : 'text-gray-400 dark:text-gray-500'}`} xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16">
                               <path d="M11.92 6.851c.044-.027.09-.05.137-.07.481-.275.758-.68.908-1.256.126-.55.169-.81.357-2.058.075-.498.144-.91.217-1.264-4.122.75-7.087 2.984-9.12 6.284a18.087 18.087 0 0 0-1.985 4.585 17.07 17.07 0 0 0-.354 1.506c-.05.265-.076.448-.086.535a1 1 0 0 1-1.988-.226c.056-.49.209-1.312.502-2.357a20.063 20.063 0 0 1 2.208-5.09C5.31 3.226 9.306.494 14.913.004a1 1 0 0 1 .954 1.494c-.237.414-.375.993-.567 2.267-.197 1.306-.244 1.586-.392 2.235-.285 1.094-.789 1.853-1.552 2.363-.748 3.816-3.976 5.06-8.515 4.326a1 1 0 0 1 .318-1.974c2.954.477 4.918.025 5.808-1.556-.628.085-1.335.121-2.127.121a1 1 0 1 1 0-2c1.458 0 2.434-.116 3.08-.429Z" />
                             </svg>
 

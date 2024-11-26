@@ -3,14 +3,14 @@ import {
     getAllPosts,
     createPost
 } from "../controllers/postController.js";
-
+import authenticateUser from "../middlewares/authenticateUser.js";
 const router = Router();
 
 // Route to get all posts for the authenticated user
 //router.get("/", getPosts);
 
 // Route to create a new post
-router.post("/", createPost);
+router.route("/add").post(authenticateUser,createPost);
 
 // Route to get all posts (global view)
 router.get("/all", getAllPosts);

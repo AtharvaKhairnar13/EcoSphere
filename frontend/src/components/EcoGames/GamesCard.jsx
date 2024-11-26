@@ -13,7 +13,7 @@ import {
             <Card className="w-64 h-80">
                 <CardHeader floated={false} className="h-72">
                 <img 
-                    src="https://docs.material-tailwind.com/img/team-3.jpg" 
+                    src="https://via.placeholder.com/800x400?text=Game" 
                     alt="profile-picture" 
                     className="w-full h-72 object-cover" // Fixed width and height
                 />

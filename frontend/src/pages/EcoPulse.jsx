@@ -69,15 +69,15 @@ export const EcoPulse = () => {
 
 
                         {/* Cards */}
-                        <div className="grid grid-cols-12 gap-6">
-                          {posts.map((post) => (
-                        <div key={post._id} className="col-span-12 sm:col-span-6 lg:col-span-4">
-    {console.log("Rendering post:", post)} {/* Log each post */}
-    <HorizontalCard post={post} />
-  </div>
-))}
+                        <div className="grid grid-cols-1 gap-6">
+  {posts.map((post) => (
+    <div key={post._id} className="w-full">
+      <HorizontalCard post={post} />
+    </div>
+  ))}
+</div>
 
-                        </div>
+                       
 
                     </div>
                 </main>
@@ -88,3 +88,5 @@ export const EcoPulse = () => {
         </div>
     );
 };
+
+

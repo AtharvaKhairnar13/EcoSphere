@@ -21,6 +21,7 @@ import Banner from '../partials/Banner';
 import CarouselLab from '../components/EcoLab/CarouselLab';
 import images from '../database/images';
 import { CardLab } from '../components/EcoLab/Card';
+import Simulatorimages from '../components/EcoLab/Simulator';
 
 const EcoLab = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -38,7 +39,7 @@ const EcoLab = () => {
           <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
   
           <main className="grow">
-            <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl">
+            <div className="px-0 sm:px-1 lg:px-8 py-2 w-full max-w-9xl">
   
               {/* Dashboard actions */}
               <div className="sm:flex sm:justify-between sm:items-center mb-8">
@@ -50,12 +51,8 @@ const EcoLab = () => {
               </div>
   
               {/* Cards */}
-              <CarouselLab images={images}/>
+              <CarouselLab images={Simulatorimages}/>
               <div className="flex flex-wrap gap-10 justify-start mx-24 pl-12 p-15 my-20">
-                <CardLab />
-                <CardLab />
-                <CardLab />
-                <CardLab />
                 <CardLab />
               </div>
             </div>

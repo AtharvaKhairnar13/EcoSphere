@@ -21,7 +21,7 @@ const CarbonMap = () => {
 
   // Fetch country data
   const getData = () => {
-    fetch("http://localhost:3004/countries", {
+    fetch("http://localhost:4000/countries", {
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",

@@ -85,7 +85,6 @@ const sendOTPemail = asyncHandler(async ({ _id, email }, res) => {
       <body>
         <div class="container">
           <div class="header">
-            <img src="https://via.placeholder.com/100x100" alt="EcoSphere Logo">
             <h2>Welcome to EcoSphere 🌍</h2>
           </div>
           <div class="content">

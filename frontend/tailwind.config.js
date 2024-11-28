@@ -135,5 +135,6 @@ module.exports = withMT({
         modifySelectors(({ className }) => `.sidebar-expanded .${e(`sidebar-expanded${separator}${className}`)}`);
       });
     }),
+    [require('@tailwindcss/line-clamp')],
   ],
 });

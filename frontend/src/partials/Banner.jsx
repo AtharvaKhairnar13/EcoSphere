@@ -14,7 +14,7 @@ function Banner() {
       : 'https://github.com/cruip/tailwind-dashboard-template';
 
   const handleBannerClick = () => {
-    navigate('/eco-bot'); // Navigate to the EcoBot page
+    navigate('/dashboard/eco-bot'); // Navigate to the EcoBot page
   };
 
   return (

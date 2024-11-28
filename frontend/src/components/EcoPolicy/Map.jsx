@@ -1,23 +1,19 @@
 import React, { useEffect, useState } from "react";
-import {
-  ComposableMap,
-  Geographies,
-  Geography,
-} from "react-simple-maps";
+import { ComposableMap, Geographies, Geography } from "react-simple-maps";
 import { scaleLinear } from "d3-scale";
 
 // GeoJSON URL for the world map
-const geoUrl =
-  "https://raw.githubusercontent.com/lotusms/world-map-data/main/world.json";
+const geoUrl = "https://raw.githubusercontent.com/lotusms/world-map-data/main/world.json";
 
-// Adjusted color scale for the large range of population density
+// Adjusted color scale with green, yellow, and red shades for EPI values (High EPI = Green, Low EPI = Red)
 const colorScale = scaleLinear()
-  .domain([0, 6000000]) // Adjusted the domain to match the data range
-  .range(["#a72bb5", "#0376db"]);
+  .domain([20, 50, 80]) // Domain from 0 (worst EPI) to 100 (best EPI)
+  .range(["#FF0000", "#FFFF00", "#008000"]); // Red to Yellow to Green
 
 const Map = () => {
   const [countries, setCountries] = useState([]);
   const [hoveredCountry, setHoveredCountry] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   // Fetch country data
   const getData = () => {
@@ -40,6 +36,11 @@ const Map = () => {
     getData();
   }, []);
 
+  const handleCountryClick = (geo, countryData) => {
+    console.log(`Selected country: ${countryData ? countryData.name : "Unknown"}`);
+    setSelectedCountry(geo.id); // Set the selected country ISO3 code
+  };
+
   return (
     <div className="flex justify-center items-center m-0 p-6">
       <div className="w-full h-[78vh] shadow-xl rounded-lg overflow-hidden bg-white p-2 relative">
@@ -61,10 +62,7 @@ const Map = () => {
           >
             <strong>{hoveredCountry.name}</strong>
             <br />
-            Population Density:{" "}
-            {hoveredCountry.population_density
-              ? hoveredCountry.population_density
-              : "Unknown"}
+            EPI: {hoveredCountry.EPI ? hoveredCountry.EPI : "Unknown"}
           </div>
         )}
         <ComposableMap
@@ -82,26 +80,25 @@ const Map = () => {
             <Geographies geography={geoUrl}>
               {({ geographies }) =>
                 geographies.map((geo) => {
-                  const countryData = countries.find(
-                    (s) => s.ISO3 === geo.id
-                  );
-                  const populationDensity = countryData
-                    ? parseFloat(countryData.population_density)
-                    : 0;
+                  const countryData = countries.find((s) => s.ISO3 === geo.id);
+                  const EPI = countryData ? parseFloat(countryData.EPI_2024) : 0;
 
                   // Determine the fill color for each country
                   const fillColor =
-                    countryData && !isNaN(populationDensity)
-                      ? colorScale(populationDensity)
-                      : "#EEE";
+                    countryData && !isNaN(EPI) ? colorScale(EPI) : "#EEE";
+
+                  // Check if this country is selected
+                  const isSelected = selectedCountry === geo.id;
 
                   return (
                     <Geography
                       key={geo.rsmKey}
                       geography={geo}
                       fill={
-                        hoveredCountry && hoveredCountry.ISO3 === geo.id
-                          ? "#FFA500" // Change color on hover
+                        isSelected
+                          ? "#FF6347" // Selected country color (Tomato)
+                          : hoveredCountry && hoveredCountry.ISO3 === geo.id
+                          ? "#FFF000" // Hovered country color (Orange)
                           : fillColor
                       }
                       stroke="#111"
@@ -110,10 +107,11 @@ const Map = () => {
                         setHoveredCountry({
                           ISO3: geo.id,
                           name: countryData ? countryData.name : "Unknown",
-                          population_density: populationDensity,
+                          EPI: EPI,
                         });
                       }}
                       onMouseLeave={() => setHoveredCountry(null)}
+                      onClick={() => handleCountryClick(geo, countryData)} // Handle country click
                     />
                   );
                 })

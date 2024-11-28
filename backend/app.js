@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import axios from 'axios'; // Add this import
 import userRoute from "./routes/userRoute.js"
 import connectDB from "./config/db.js";
 //import authenticateUser from "./middlewares/authenticateUser.js";
@@ -33,6 +34,41 @@ app.use(
 
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/posts", postRoutes); // Use the posts routes
+
+// News API integration
+const NEWS_API_KEY = process.env.NEWS_API_KEY; // Store your News API key in an environment variable
+const NEWS_API_URL = `https://newsapi.org/v2/everything`;
+
+// Fetch news based on a query
+app.get("/api/v1/news", async (req, res) => {
+  try {
+    const { query } = req.query; // Expecting query param like "climate change" or "eco-tourism"
+
+    if (!query) {
+      return res.status(400).json({ message: "Query parameter is required" });
+    }
+
+    // Make a request to the News API
+    const response = await axios.get(NEWS_API_URL, {
+      params: {
+        q: query, // Search query
+        apiKey: NEWS_API_KEY,  // News API Key
+        pageSize: 100,  // You can adjust the number of results returned
+      },
+    });
+
+    const newsData = response.data.articles;
+    const randomizedNews = newsData.sort(() => Math.random() - 0.5);
+
+    // Send the news data as a response
+    return res.status(200).json({ articles: randomizedNews });
+  } catch (error) {
+    console.error("Error fetching news:", error.message);
+    return res.status(500).json({ message: "Failed to fetch news" });
+  }
+});
+
+
 
 // Connect to the database
 const startServer = async () => {

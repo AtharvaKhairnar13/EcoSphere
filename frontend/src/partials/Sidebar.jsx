@@ -392,7 +392,7 @@ function Sidebar({
                 {(handleClick, open) => (
                     <React.Fragment>
                     <Link
-                    to="/dashboard/eco-engage" // Use `to` for routing to the EcoLab page
+                    to="/dasboard/eco-engage" // Use `to` for routing to the EcoLab page
                     className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
                       pathname.includes("/eco-engage")
                         ? "text-black-500"

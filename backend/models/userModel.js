@@ -49,6 +49,11 @@ const userSchema = new Schema(
       type: Boolean,
       default: true, // Default to true if email notifications are enabled by default
     },
+    vector: {
+      type: [Number], // Array of floats representing the vector
+      required: true,
+    },
+    
   },
   { timestamps: true }
 );

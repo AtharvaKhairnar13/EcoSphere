@@ -1,4 +1,8 @@
 import React from 'react';
+import {
+  Button,
+  
+} from "@material-tailwind/react";
 
 const VdoCard = ({ imageSrc, title, description, category, onClick }) => {
   return (
@@ -17,16 +21,9 @@ const VdoCard = ({ imageSrc, title, description, category, onClick }) => {
         <h4 className="mb-2 text-slate-800 text-xl font-semibold">{title}</h4>
         <p className="mb-8 text-slate-600 leading-normal font-light">{description}</p>
         <div>
-          <a
-            href="#"
-            className="text-slate-800 font-semibold text-sm hover:underline flex items-center"
-            onClick={onClick}
-          >
-            Learn More
-            <svg xmlns="http://www.w3.org/2000/svg" className="ml-2 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3" />
-            </svg>
-          </a>
+          <Button onClick={onClick} color="green" className="mt-0">
+        Watch Now
+      </Button>
         </div>
       </div>
     </div>

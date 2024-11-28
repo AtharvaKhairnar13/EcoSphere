@@ -18,7 +18,7 @@ const EcoBot = () => {
 
     // Initialize GoogleGenerativeAI instance with API key
   const genAI = new GoogleGenerativeAI(API_KEY);
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" ,systemInstruction: "You are a chat bot for climate education and advocacy. when user asks you asny question and suggestions keep the answer short like a personal message",});
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -79,7 +79,7 @@ const EcoBot = () => {
           <div className="flex flex-col lg:flex-row gap-6 h-full">
             {/* Chat Section */}
             <div className="bg-white flex-[2] shadow-md rounded-lg border border-gray-300 p-6 flex flex-col relative h-full">
-              <h2 className="font-bold text-2xl mb-4 text-gray-800">EcoChat</h2>
+              <h2 className="font-bold text-2xl mb-4 text-gray-800">EcoBot</h2>
               <div className="flex-grow overflow-y-auto">
     {messages.map((message, index) => (
       <div
@@ -122,22 +122,7 @@ const EcoBot = () => {
             </div>
 
             {/* History Section */}
-            <div className="bg-white flex-[1] shadow-md rounded-lg border border-gray-300 p-6 flex flex-col h-full">
-              <h2 className="font-bold text-2xl mb-4 text-gray-800">
-                History
-              </h2>
-              <div className="flex-grow overflow-y-auto">
-                <SearchHistory />
-              </div>
-              <div className="mt-4">
-                <Button
-                  variant="outlined"
-                  className="text-red-500 border-red-500 hover:bg-red-100 w-full"
-                >
-                  Clear History
-                </Button>
-              </div>
-            </div>
+            
           </div>
         </main>
       </div>

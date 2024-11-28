@@ -25,8 +25,8 @@ export function MessageDialog() {
     if (!msg.trim()) {
       return "Message cannot be empty!";
     }
-    if (msg.length > 250) {
-      return "Message must be less than 250 characters.";
+    if (msg.length > 1000) {
+      return "Message must be less than 1000 characters.";
     }
     return null;
   };

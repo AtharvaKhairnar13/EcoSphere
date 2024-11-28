@@ -9,14 +9,16 @@ const EcoLearnVideo = () => {
         {
           id: "How to Reduce Your Carbon Footprint | Sustainability Tips | WWF",
           title: "How to Reduce Your Carbon Footprint | Sustainability Tips | WWF",
+          description: "Everyone has an Environmental Footprint 🌍 \nYour daily choices—like the energy you consume, the food you eat, and the products you buy—all contribute to your environmental footprint. This video breaks down what it means and offers practical tips to make eco-friendly decisions that reduce your impact on the planet.\n💡 Watch to learn how small changes can lead to big environmental benefits!",
           imageSrc: "https://img.youtube.com/vi/YbEFJd-fJpQ/sddefault.jpg",
           videoUrl: "https://www.youtube.com/embed/YbEFJd-fJpQ"
         },
         {
-          id: "Financial Freedom",
-          title: "Financial Freedom",
-          imageSrc: "https://img.youtube.com/vi/KN0y9lMZQRQ/sddefault.jpg",
-          videoUrl: "https://www.youtube.com/embed/KN0y9lMZQRQ",
+          id: "20 Ways To Save Electricity at Home - Frugal Living",
+          title: "20 Ways To Save Electricity at Home - Frugal Living",
+          description:"In this video we will tell you 20 ways you can save electricity and money at home. Frugal living is the essence and requires we go over all expenses that can be avoided.",
+          imageSrc: "https://img.youtube.com/vi/EB9I2Wp7stg/sddefault.jpg",
+          videoUrl: "https://www.youtube.com/embed/EB9I2Wp7stg",
         },
         {
           id: "Stock Market",
@@ -101,6 +103,8 @@ const EcoLearnVideo = () => {
             <div className="absolute inset-0 flex items-center justify-center">
               <VdoButton
                 imageSrc={item.imageSrc}
+                title={item.title}
+                description={item.description}
                 onClick={() => handleItemClick(item.videoUrl)}
                 style={{
                   width: "100%",

@@ -19,6 +19,7 @@ import DashboardCard12 from '../partials/dashboard/DashboardCard12';
 import DashboardCard13 from '../partials/dashboard/DashboardCard13';
 import Banner from '../partials/Banner';
 import Navbar from '../components/EcoTracker/Navbar';
+import DashboardCard1 from '../components/EcoStats/ClimateAndCarbonEmission/dashboard/DashboardCard1';
 
 const EcoTracker = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -53,7 +54,17 @@ const EcoTracker = () => {
   
               {/* Cards */}
               <div className="grid grid-cols-12 gap-6">
-  
+              <DashboardCard1 
+                  title="Total Carbon Emissions" 
+                  salesAmount={41.6} 
+                  salesChangePercentage={12} 
+              />
+
+                <DashboardCard1 
+                    title="Per Capita Carbon Emission" 
+                    salesAmount={1.9} 
+                    salesChangePercentage={8} 
+                />
                 
                 
               </div>

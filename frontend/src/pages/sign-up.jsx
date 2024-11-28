@@ -1,32 +1,29 @@
 import React, { useState, useEffect } from "react";
 import { object, string } from "yup";
 import { toast } from "react-toastify";
-
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
-import {
-  useRegisterMutation,
-  useSendOtpMutation,
-} from "../features/api/apiSlices/userApiSlice.js";
+import { useRegisterMutation, useSendOtpMutation, useVerifyOtpMutation } from "../features/api/apiSlices/userApiSlice.js";
 import { setCredentials } from "../features/authenticate/authSlice";
 import { updateLoader } from "../features/loader/loaderSlice";
-import validateForm from '../utils/validateForm.js';  
+import validateForm from "../utils/validateForm.js";
 import patternImage from "../images/pattern.png";
-import OtpForm from "../components/Form/OtpForm.jsx";
-import SubmitButton from "../components/SubmitButton.jsx";
-import { Checkbox, Button, Input, Typography } from "@material-tailwind/react";
+import { Checkbox, Button, Input, Typography, Select, Option } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
+import logo from "../images/logo.png"; // Add your logo image path
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
+    country: "", // Add country to form data
   });
   const [errors, setErrors] = useState({});
   const [otp, setOtp] = useState("");
   const [countdown, setCountdown] = useState(60);
   const [step, setStep] = useState(1); // 1: registration, 2: OTP verification
+  const [isChecked, setIsChecked] = useState(false); // Checkbox state
 
   const validationSchema = object({
     username: string()
@@ -37,21 +34,31 @@ export default function SignUp() {
     password: string()
       .required("Password is required.")
       .min(8, "Password must be at least 8 characters long."),
+    country: string().required("Country is required."), // Add country validation
   });
 
-  const { username, email, password } = formData;
+  const { username, email, password, country } = formData;
 
   const [register, { isLoading: registerLoading }] = useRegisterMutation();
   const [sendOtp, { isLoading: sendOtpLoading }] = useSendOtpMutation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const handleOnChange = (e) => {
+  const handleOnChange = (e, name = null) => {
+    const fieldName = name || e.target.name; // Use provided name or fallback to event's target name
+    const fieldValue = name ? e : e.target.value; // If name is provided, `e` is value
+  
     setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [fieldName]: fieldValue,
     }));
-    validateForm(e.target.name, e.target.value, validationSchema, setErrors);
+  
+    validateForm(fieldName, fieldValue, validationSchema, setErrors);
+  };
+  
+
+  const handleCheckboxChange = (e) => {
+    setIsChecked(e.target.checked);
   };
 
   const handleSubmit = async (e) => {
@@ -77,21 +84,17 @@ export default function SignUp() {
     }
   };
 
+  const [verifyOtp, { isLoading: verifyOtpLoading }] = useVerifyOtpMutation();
   const handleOtpSubmit = async (e) => {
+    e.preventDefault();
     try {
-      e.preventDefault();
-
       dispatch(updateLoader(40));
-      const otpRes = await sendOtp({ email, otp }).unwrap();
-
-      dispatch(updateLoader(60));
-      await dispatch(setCredentials(otpRes.user));
-      toast.success(otpRes.message || "Email has been verified successfully!");
-
-      navigate("/dashboard");
+      const res = await verifyOtp({ email, otp }).unwrap();
+      console.log(res);
+      toast.success(res.message || "OTP verified successfully!");
+      navigate("/signin"); // Redirect after successful verification
     } catch (error) {
-      console.log(error);
-      toast.error(error?.data?.error || "Unexpected Internal Server Error!");
+      toast.error(error?.data?.message || "OTP Verification failed.");
     } finally {
       dispatch(updateLoader(100));
     }
@@ -118,8 +121,6 @@ export default function SignUp() {
     }
   };
 
-  const hasErrors = Object.values(errors).some((error) => !!error);
-
   useEffect(() => {
     let timer;
     if (countdown > 0) {
@@ -131,171 +132,199 @@ export default function SignUp() {
     return () => clearTimeout(timer);
   }, [countdown]);
 
+  const hasErrors = Object.values(errors).some((error) => !!error);
+
+  // Basic country options for the select dropdown
+  const countryOptions = [
+    { value: "IN", label: "India" },
+    { value: "US", label: "United States" },
+    { value: "CA", label: "Canada" },
+    { value: "GB", label: "United Kingdom" },
+    { value: "AU", label: "Australia" },
+    // Add more countries here
+  ];
+
   return (
-    <section className="m-8 flex">
-      <div className="w-2/5 h-full hidden lg:block">
-        <img
-          src={patternImage}
-          className="h-full w-full object-cover rounded-3xl"
-        />
-      </div>
-      <div className="w-full lg:w-3/5 flex flex-col items-center justify-center">
-        <div className="text-center">
-          <Typography variant="h2" className="font-bold mb-4">
-            Join Us Today
-          </Typography>
-          <Typography
-            variant="paragraph"
-            color="blue-gray"
-            className="text-lg font-normal"
+    <>
+      <section className="flex gap-4 bg-white min-h-screen">
+        <div className="w-full lg:w-3/5 mt-16 px-4">
+          {/* Logo Section */}
+          <div className="text-center mb-8">
+            <img src={logo} alt="Logo" className="mx-auto w-24" />
+          </div>
+          <div className="text-center">
+            <Typography variant="h2" className="font-bold mb-4 text-green-600">
+              {step === 1 ? "Create an Account" : "Email Verification"}
+            </Typography>
+            <Typography variant="paragraph" color="blue-gray" className="text-lg font-normal">
+              {step === 1
+                ? "Join our platform and make a positive impact on the environment."
+                : "Enter the OTP sent to your email to proceed."}
+            </Typography>
+          </div>
+          <form
+            className="mt-8 mb-2 mx-auto w-full max-w-md"
+            onSubmit={step === 1 ? handleSubmit : handleOtpSubmit}
           >
-            Enter your email and password to register.
-          </Typography>
+            {step === 1 ? (
+              <>
+                <div className="mb-4 flex flex-col gap-6">
+                  {/* Form Fields */}
+                  <Typography variant="small" color="blue-gray" className="font-medium">
+                    Your username
+                  </Typography>
+                  <Input
+                    size="lg"
+                    placeholder="Your username"
+                    name="username"
+                    value={username}
+                    onChange={handleOnChange}
+                    error={Boolean(errors.username)}
+                  />
+                  {errors.username && (
+                    <Typography variant="small" color="red" className="mt-1">
+                      {errors.username}
+                    </Typography>
+                  )}
+
+                  <Typography variant="small" color="blue-gray" className="font-medium">
+                    Your email
+                  </Typography>
+                  <Input
+                    size="lg"
+                    placeholder="name@mail.com"
+                    name="email"
+                    value={email}
+                    onChange={handleOnChange}
+                    error={Boolean(errors.email)}
+                  />
+                  {errors.email && (
+                    <Typography variant="small" color="red" className="mt-1">
+                      {errors.email}
+                    </Typography>
+                  )}
+
+                  <Typography variant="small" color="blue-gray" className="font-medium">
+                    Password
+                  </Typography>
+                  <Input
+                    type="password"
+                    size="lg"
+                    placeholder="********"
+                    name="password"
+                    value={password}
+                    onChange={handleOnChange}
+                    error={Boolean(errors.password)}
+                  />
+                  {errors.password && (
+                    <Typography variant="small" color="red" className="mt-1">
+                      {errors.password}
+                    </Typography>
+                  )}
+
+                  {/* Country Select */}
+                  <Typography variant="small" color="blue-gray" className="font-medium">
+                    Select your country
+                  </Typography>
+                  <Select
+                    label="Select Country"
+                    name="country"
+                    value={country}
+                    onChange={(value) => handleOnChange(value, "country")}
+                    error={Boolean(errors.country)}
+                  >
+                    {countryOptions.map((option) => (
+                      <Option key={option.value} value={option.value}>
+                        {option.label}
+                      </Option>
+                    ))}
+                  </Select>
+
+                  {errors.country && (
+                    <Typography variant="small" color="red" className="mt-1">
+                      {errors.country}
+                    </Typography>
+                  )}
+                </div>
+                <Checkbox
+                  checked={isChecked}
+                  onChange={handleCheckboxChange}
+                  label={
+                    <Typography variant="small" color="gray" className="font-medium">
+                      I agree to the&nbsp;
+                      <Link to="/terms" className="text-green-500 hover:text-green-700">
+                        Terms & Conditions
+                      </Link>
+                    </Typography>
+                  }
+                />
+                <div className="mt-6">
+                  <Button
+                    fullWidth
+                    color="green"
+                    size="lg"
+                    type="submit"
+                    disabled={hasErrors || registerLoading || !isChecked}
+                  >
+                    {registerLoading ? "Signing up..." : "Sign up"}
+                  </Button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="mb-4 flex flex-col gap-6">
+                  <Typography variant="small" color="blue-gray" className="font-medium">
+                    Enter OTP
+                  </Typography>
+                  <Input
+                    size="lg"
+                    placeholder="Enter OTP"
+                    name="otp"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                  />
+                </div>
+                <div className="flex justify-between items-center">
+                  <Button
+                    size="sm"
+                    color="green"
+                    onClick={resendOtp}
+                    disabled={countdown > 0}
+                  >
+                    Resend OTP ({countdown}s)
+                  </Button>
+                  <Button
+                    fullWidth
+                    color="green"
+                    size="lg"
+                    type="submit"
+                    onClick={handleOtpSubmit}
+                    disabled={!otp || sendOtpLoading}
+                  >
+                    {sendOtpLoading ? "Verifying..." : "Verify OTP"}
+                  </Button>
+                </div>
+              </>
+            )}
+          </form>
         </div>
 
-        <form
-          className="mt-8 mb-2 mx-auto w-80 max-w-screen-lg lg:w-1/2"
-          onSubmit={step === 1 ? handleSubmit : handleOtpSubmit}
-        >
-          {step === 1 ? (
-            <>
-              <div className="mb-1 flex flex-col gap-6">
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="-mb-3 font-medium"
-                >
-                  Your username
-                </Typography>
-                <Input
-                size="lg"
-                placeholder="Username"
-                className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                value={username}
-                name="username"
-                onChange={handleOnChange}
-                error={!!errors.username} // Ensure it's a boolean
-                helperText={errors.username} // Show the error message as helper text
-              />
-
-              </div>
-
-              <div className="mb-1 flex flex-col gap-6">
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="-mb-3 font-medium"
-                >
-                  Your email
-                </Typography>
-                <Input
-                  size="lg"
-                  placeholder="name@mail.com"
-                  className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                  value={email}
-                  name="email"
-                  onChange={handleOnChange}
-                  error={!!errors.email} // Ensure it's a boolean
-                  helperText={errors.email} // Show the error message as helper text
-                />
-              </div>
-
-              <div className="mb-1 flex flex-col gap-6">
-                <Typography
-                  variant="small"
-                  color="blue-gray"
-                  className="-mb-3 font-medium"
-                >
-                  Your password
-                </Typography>
-                <Input
-                  size="lg"
-                  type="password"
-                  placeholder="Password"
-                  className="!border-t-blue-gray-200 focus:!border-t-gray-900"
-                  value={password}
-                  name="password"
-                  onChange={handleOnChange}
-                  error={!!errors.password} // Ensure it's a boolean
-                  helperText={errors.password} // Show the error message as helper text
-                />
-              </div>
-
-              <Checkbox
-                label={
-                  <Typography
-                    variant="small"
-                    color="gray"
-                    className="flex items-center justify-start font-medium"
-                  >
-                    I agree the&nbsp;
-                    <a
-                      href="#"
-                      className="font-normal text-black transition-colors hover:text-gray-900 underline"
-                    >
-                      Terms and Conditions
-                    </a>
-                  </Typography>
-                }
-                containerProps={{ className: "-ml-2.5" }}
-              />
-              <SubmitButton
-                isLoading={registerLoading}
-                handleSubmit={handleSubmit}
-                isDisabled={!email || !password || !username || hasErrors}
-              />
-            </>
-          ) : (
-            <OtpForm
-              otp={otp}
-              setOtp={setOtp}
-              email={email}
-              handleOtpSubmit={handleOtpSubmit}
-              resendOtp={resendOtp}
-              countdown={countdown}
-              verifyOtpLoading={sendOtpLoading}
-            />
-          )}
-
-          <div className="space-y-4 mt-8">
-            <Button
-              size="lg"
-              color="white"
-              className="flex items-center gap-2 justify-center shadow-md"
-              fullWidth
-            >
-              <svg
-                width="17"
-                height="16"
-                viewBox="0 0 17 16"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M16.3442 8.18429C16.3442 7.64047 16.3001 7.09371 16.206 6.55872H8.66016V9.63937H12.9813C12.802 10.6329 12.2258 11.5119 11.3822 12.0135V13.2865H13.4579C15.1546 11.9008 16.3442 9.4776 16.3442 8.18429Z"
-                  fill="#4285F4"
-                />
-                <path
-                  d="M8.66016 4.55872C9.35639 4.55872 9.97653 4.89504 10.3188 5.35921L12.4762 4.07791L12.4762 4.07791C11.9088 3.51527 10.7796 3.09527 9.51477 3.09527C7.5135 3.09527 5.98866 4.13709 5.14455 5.55742L6.38233 6.83972C6.85985 5.86339 7.74207 5.17756 8.66016 5.17756Z"
-                  fill="#34A853"
-                />
-                <path
-                  d="M5.14456 5.55743C5.14456 4.66279 5.41431 3.85606 5.88947 3.18248L4.64035 2.30517L3.5103 2.30516L3.50995 3.54958C3.50995 4.95063 4.18662 5.67077 5.14456 5.67077L5.14456 5.55743Z"
-                  fill="#FBBC05"
-                />
-              </svg>
-              Sign Up With Google
-            </Button>
+        {/* Right-side Pattern Image Section */}
+        <div className="hidden lg:block lg:w-2/5 relative rounded-2xl overflow-hidden">
+          <img src={patternImage} alt="Earth" className="object-cover h-full w-full" />
+          <div className="absolute inset-0 bg-green-800 opacity-70" />
+          <div className="absolute inset-0 flex justify-center items-center text-center text-white px-8">
+            <div>
+              <Typography variant="h4" className="font-bold">
+                Make the Earth Better
+              </Typography>
+              <Typography className="mt-4 font-semibold text-lg">
+                Join a global initiative for a sustainable future.
+              </Typography>
+            </div>
           </div>
-
-          <p className="mt-8 text-center text-gray-500">
-            Already have an account?{" "}
-            <Link to="/signin" className="font-medium text-blue-600">
-              Log In
-            </Link>
-          </p>
-        </form>
-      </div>
-    </section>
+        </div>
+      </section>
+    </>
   );
 }

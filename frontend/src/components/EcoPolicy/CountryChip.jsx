@@ -1,24 +1,46 @@
-import { Chip } from '@material-tailwind/react';
+import React from "react";
+import { Chip } from "@material-tailwind/react";
 
+// Icon Component
 function Icon() {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
-      <path
-        fillRule="evenodd"
-        d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z"
-        clipRule="evenodd"
-      />
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512" className="h-5 w-5" fill="white">
+      <path d="M323.4 85.2l-96.8 78.4c-16.1 13-19.2 36.4-7 53.1c12.9 17.8 38 21.3 55.3 7.8l99.3-77.2c7-5.4 17-4.2 22.5 2.8s4.2 17-2.8 22.5l-20.9 16.2L512 316.8 512 128l-.7 0-3.9-2.5L434.8 79c-15.3-9.8-33.2-15-51.4-15c-21.8 0-43 7.5-60 21.2zm22.8 124.4l-51.7 40.2C263 274.4 217.3 268 193.7 235.6c-22.2-30.5-16.6-73.1 12.7-96.8l83.2-67.3c-11.6-4.9-24.1-7.4-36.8-7.4C234 64 215.7 69.6 200 80l-72 48 0 224 28.2 0 91.4 83.4c19.6 17.9 49.9 16.5 67.8-3.1c5.5-6.1 9.2-13.2 11.1-20.6l17 15.6c19.5 17.9 49.9 16.6 67.8-2.9c4.5-4.9 7.8-10.6 9.9-16.5c19.4 13 45.8 10.3 62.1-7.5c17.9-19.5 16.6-49.9-2.9-67.8l-134.2-123zM16 128c-8.8 0-16 7.2-16 16L0 352c0 17.7 14.3 32 32 32l32 0c17.7 0 32-14.3 32-32l0-224-80 0zM48 320a16 16 0 1 1 0 32 16 16 0 1 1 0-32zM544 128l0 224c0 17.7 14.3 32 32 32l32 0c17.7 0 32-14.3 32-32l0-208c0-8.8-7.2-16-16-16l-80 0zm32 208a16 16 0 1 1 32 0 16 16 0 1 1 -32 0z" />
     </svg>
   );
 }
 
-export function ChipIcon() {
+// Function to generate random color from a predefined list
+const getRandomColor = () => {
+  const colors = [
+    "bg-red-500",
+    "bg-green-500",
+    "bg-blue-500",
+    "bg-yellow-500",
+    "bg-purple-500",
+    "bg-pink-500",
+    "bg-indigo-500",
+    "bg-teal-500",
+  ];
+  return colors[Math.floor(Math.random() * colors.length)];
+};
+
+// ChipIcon Component with chipData prop
+export function ChipIcon({ chipData }) {
+  console.log(chipData); // Check the data being passed
   return (
-    <div className="flex gap-x-10 p-6">
-      <Chip value="account" icon={<Icon />} />
-      <Chip value="account" variant="gradient" icon={<Icon />} />
-      <Chip value="account" variant="outlined" icon={<Icon />} />
-      <Chip value="account" variant="ghost" icon={<Icon />} />
+    <div className="flex flex-wrap gap-4 p-6">
+      {chipData.map((item, index) => (
+        <Chip
+          key={index}
+          value={item.label}
+          variant="ghost"
+          icon={<Icon />}
+          className={`text-white ${getRandomColor()}`}
+        >
+          {item.label} {/* Ensure the label is displayed inside the chip */}
+        </Chip>
+      ))}
     </div>
   );
 }

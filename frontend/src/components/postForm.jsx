@@ -1,65 +1,100 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Button,
   Dialog,
   DialogHeader,
   DialogBody,
   DialogFooter,
-  Input,
   Textarea,
-  Typography,  // Added this import
 } from "@material-tailwind/react";
+import { toast } from "react-toastify";
+import { useAddPostMutation } from "../features/api/apiSlices/postApiSlice"; // Import the mutation hook
+import { useDispatch } from "react-redux";
+import { updateLoader } from "../features/loader/loaderSlice";
 
 export function MessageDialog() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
+  const [errors, setErrors] = useState({});
+  const [addPost, { isLoading }] = useAddPostMutation(); // RTK Query mutation
+  const dispatch = useDispatch();
 
   const handleOpen = () => setOpen(!open);
 
+  const validateMessage = (msg) => {
+    if (!msg.trim()) {
+      return "Message cannot be empty!";
+    }
+    if (msg.length > 250) {
+      return "Message must be less than 250 characters.";
+    }
+    return null;
+  };
+
+  const handlePost = async () => {
+    const error = validateMessage(message);
+    if (error) {
+      setErrors({ message: error });
+      return;
+    }
+    setErrors({}); // Clear previous errors
+
+    try {
+      dispatch(updateLoader(40));
+      console.log("Message being sent:", message);
+      const response = await addPost({ message }).unwrap(); // Call the mutation
+      dispatch(updateLoader(70));
+
+      toast.success("Post added successfully!");
+      console.log("Post created:", response);
+
+      // Reset dialog and input
+      setMessage("");
+      setOpen(false);
+    } catch (error) {
+      console.error("Error posting message:", error);
+      toast.error(error?.data?.error || "Failed to add the post. Please try again.");
+    } finally {
+      dispatch(updateLoader(100));
+    }
+  };
+
   return (
-    <>
-      <Button onClick={handleOpen} className="bg-color:gray-400">Add Post</Button>
-      <Dialog open={open} size="xs" handler={handleOpen}>
-        <div className="flex items-center justify-between">
-          <DialogHeader className="flex flex-col items-start">
-            <Typography className="mb-1" variant="h4">
-              New message to @
-            </Typography>
-          </DialogHeader>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="mr-3 h-5 w-5"
-            onClick={handleOpen}
-          >
-            <path
-              fillRule="evenodd"
-              d="M5.47 5.47a.75.75 0 011.06 0L12 10.94l5.47-5.47a.75.75 0 111.06 1.06L13.06 12l5.47 5.47a.75.75 0 11-1.06 1.06L12 13.06l-5.47 5.47a.75.75 0 01-1.06-1.06L10.94 12 5.47 6.53a.75.75 0 010-1.06z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </div>
+    <div>
+      <Button onClick={handleOpen} color="green" className="mt-4">
+        Add Post
+      </Button>
+
+      <Dialog open={open} handler={handleOpen}>
+        <DialogHeader>Add a New Post</DialogHeader>
         <DialogBody>
-          <Typography className="mb-10 -mt-7" color="gray" variant="lead">
-            Write the message and then click button.
-          </Typography>
-          <div className="grid gap-6">
-            <Typography className="-mb-1" color="blue-gray" variant="h6">
-              Username
-            </Typography>
-            <Input label="Username" />
-            <Textarea label="Message" />
-          </div>
+          <Textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Type your message here..."
+            error={!!errors.message}
+            className="w-full"
+          />
+          {errors.message && <p className="text-red-500 text-sm mt-1">{errors.message}</p>}
         </DialogBody>
-        <DialogFooter className="space-x-2">
-          <Button variant="text" color="gray" onClick={handleOpen}>
-            cancel
+        <DialogFooter>
+          <Button
+            variant="text"
+            color="red"
+            onClick={handleOpen}
+            disabled={isLoading}
+          >
+            Cancel
           </Button>
-          <Button variant="gradient" color="gray" onClick={handleOpen}>
-            send message
+          <Button
+            color="green"
+            onClick={handlePost}
+            disabled={isLoading}
+          >
+            {isLoading ? "Posting..." : "Post"}
           </Button>
         </DialogFooter>
       </Dialog>
-    </>
+    </div>
   );
 }

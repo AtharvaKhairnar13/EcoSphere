@@ -9,6 +9,7 @@ import images from '../database/images';
 import { GamesCard } from '../components/EcoGames/GamesCard';
 import EcoGamesLogo from "../images/EcoGames.png";
 import { ChipIcon } from '../components/EcoGames/ChipIcon';
+import Gamesimages from '../components/EcoGames/GamesCarouselImages';
 
 const EcoGames = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -35,22 +36,14 @@ const EcoGames = () => {
                 </h1>
               </div>
 
-              <CarouselGames images={images}/>
+              <CarouselGames images={Gamesimages}/>
 
               {/* Cards */}
-              <div className="flex flex-wrap gap-9 justify-start mx-25 pl-20 pt-5 ">
+              <div className="flex flex-wrap gap-9 justify-center mx-auto p-20">
                 <GamesCard />
-                <GamesCard />
-                <GamesCard />
-                <GamesCard />
-                <GamesCard />
-                <GamesCard />
-                <GamesCard />
-                <GamesCard />
-                <GamesCard />
-                <GamesCard />
-                <GamesCard />
+                
               </div>
+
   
             </div>
           </main>

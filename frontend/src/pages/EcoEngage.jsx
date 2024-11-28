@@ -18,10 +18,15 @@ import DashboardCard11 from '../partials/dashboard/DashboardCard11';
 import DashboardCard12 from '../partials/dashboard/DashboardCard12';
 import DashboardCard13 from '../partials/dashboard/DashboardCard13';
 import Banner from '../partials/Banner';
+import { HorizontalCard } from '../components/HorizontalCardPulse'; 
+import EcoSentiment from '../components/EcoEngage/EcoSentiment';
+import CampaignList from '../components/EcoEngage/CampaignList';
+import CampaignForm from '../components/EcoEngage/CampaignForm';
+import ImpactTracker from '../components/EcoEngage/ImpactTracker';
 
 const EcoEngage = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-
+    const [selectedCountry, setSelectedCountry] = useState("India");
     return (
       <div className="flex h-screen overflow-hidden">
   
@@ -45,16 +50,35 @@ const EcoEngage = () => {
                   <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">EcoEngage</h1>
                 </div>
   
-                
-  
               </div>
   
               {/* Cards */}
-              <div className="grid grid-cols-12 gap-6">
-  
-                
-                
-              </div>
+              <main className="max-w-5xl mx-auto px-4 py-8">
+        {/* Country Selection Dropdown */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700">
+            Select Country
+          </label>
+          <select
+            value={selectedCountry}
+            onChange={(e) => setSelectedCountry(e.target.value)}
+            className="mt-1 block w-full p-2 border border-gray-300 rounded-lg"
+          >
+            <option value="India">India</option>
+            <option value="United States">United States</option>
+            <option value="Brazil">Brazil</option>
+            <option value="Australia">Australia</option>
+            <option value="Germany">Germany</option>
+            {/* Add more countries as needed */}
+          </select>
+        </div>
+
+        {/* EcoPulse Section */}
+        <EcoSentiment selectedCountry={selectedCountry} />
+        <CampaignList selectedCountry={selectedCountry} />
+        <CampaignForm selectedCountry={selectedCountry} />
+        <ImpactTracker />
+      </main>
   
             </div>
           </main>

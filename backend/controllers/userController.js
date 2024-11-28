@@ -22,8 +22,9 @@ import sendOTPemail from "../utils/OTPs/sendOTPemail.js";
 
 // Controller function to register a new user
 export const registerUser = asyncHandler(async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, email, password, country } = req.body;
 
+  // Check if email already exists
   const emailExists = await User.findOne({ email });
   if (emailExists) {
     return res
@@ -31,18 +32,30 @@ export const registerUser = asyncHandler(async (req, res) => {
       .json({ error: "Email is already Registered. Please login instead!" });
   }
 
+  // Check if username already exists
   const userNameExists = await User.findOne({ username });
   if (userNameExists) {
     return res.status(400).json({ error: "Username is already taken!" });
   }
 
+  // Hash the password
   const hashedPassword = await generateHash(password);
 
-  const newUser = new User({ username, email, password: hashedPassword });
+  // Create a new user with country details
+  const newUser = new User({ 
+    username, 
+    email, 
+    password: hashedPassword,
+    country // Adding country field to the user data
+  });
 
+  // Save the user
   await newUser.save();
 
+  // Generate a cookie for the new user
   await generateCookie(res, newUser._id);
+
+  // Respond with success message and user data
   res.status(200).json({
     message: "User registered successfully. Please verify your email!",
     user: {
@@ -50,9 +63,11 @@ export const registerUser = asyncHandler(async (req, res) => {
       username: newUser.username,
       email: newUser.email,
       verified: newUser.verified,
+      country: newUser.country, // Include country in the response
     },
   });
 });
+
 
 // Controller function to log in a user
 export const loginUser = asyncHandler(async (req, res) => {

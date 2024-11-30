@@ -53,6 +53,24 @@ export const getAllPosts = async (req, res) => {
   }
 };
 
+export const getMyPosts = async (req, res) => {
+  try {
+      const userEmail = req.userEmail; // Assuming authenticateUser middleware sets this
+      if (!userEmail) {
+          return res.status(400).json({ error: "User email is missing." });
+      }
+      const user = await User.findOne({ email: userEmail });
+      if (!user) {
+          return res.status(404).json({ error: "User not found." });
+      }
+      const userId = user._id;
+      const posts = await Post.find({ user: userId });
+      return res.status(200).json(posts);
+  } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Error fetching user posts." });
+  }
+};
 
 
 export const createPost = asyncHandler(async (req, res) => {
@@ -157,3 +175,31 @@ export const likePost = asyncHandler(async (req, res) => {
     res.status(500).json({ error: "Failed to like or dislike post and update vector" });
   }
 });
+
+export const deletePost = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const userEmail = req.userEmail; // Assuming authenticateUser middleware sets this
+
+    if (!postId) {
+      return res.status(400).json({ error: "Post ID is required." });
+    }
+
+    const user = await User.findOne({ email: userEmail });
+    if (!user) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    // Check if the post exists and belongs to the user
+    const post = await Post.findOne({ _id: postId, user: user._id });
+    if (!post) {
+      return res.status(403).json({ error: "You do not have permission to delete this post." });
+    }
+
+    await Post.findByIdAndDelete(postId);
+    res.status(200).json({ message: "Post deleted successfully." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to delete the post." });
+  }
+};

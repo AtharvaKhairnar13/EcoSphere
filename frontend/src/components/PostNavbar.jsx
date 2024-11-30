@@ -9,7 +9,7 @@ import {
 } from "@material-tailwind/react";
 import { MessageDialog } from "./postForm";
 
-export function NavbarWithSearch() {
+export function NavbarWithSearch({ onShowMyPosts, onShowAllPosts }) {
   const [openNav, setOpenNav] = React.useState(false);
   const [openDialog, setOpenDialog] = React.useState(false);
   React.useEffect(() => {
@@ -85,7 +85,12 @@ export function NavbarWithSearch() {
     >
       <div className="container mx-auto flex flex-wrap items-center justify-between text-blue-gray-900">
         
-        <div className="hidden lg:block">{navList}</div>
+      <div className="flex justify-between items-center">
+      <button onClick={onShowAllPosts} className="btn bg-transparent h-auto shadow-none">All Posts</button>
+      <button onClick={onShowMyPosts} className="btn bg-transparent h-auto shadow-none">My Posts</button>
+
+      {/* Add search or other navbar elements here */}
+    </div>
         <div className="hidden items-center gap-x-2 lg:flex">
           <div className="relative flex w-full gap-2 md:w-max">
             <Input

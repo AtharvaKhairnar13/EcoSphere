@@ -29,12 +29,12 @@ export const postApiSlice = apiSlice.injectEndpoints({
         method: "DELETE",
       }),
     }),
-    getPost: builder.query({
-      query: ({ id }) => ({
-        url: `${POSTS_URL}/${id}`,
-        method: "GET",
+    getMyPost: builder.query({
+      query: () => ({
+          url: `${POSTS_URL}/my`, // Adjust to your backend route
+          method: "GET",
       }),
-    }),
+  }),
     likePost: builder.mutation({
       query: ({ postId, isLiked }) => ({
         url: `${POSTS_URL}/like`,
@@ -51,6 +51,6 @@ export const {
   useAddPostMutation,
   useUpdatePostMutation,
   useDeletePostMutation,
-  useGetPostQuery,
+  useGetMyPostQuery,
   useLikePostMutation, // Export the useLikePostMutation hook
 } = postApiSlice;

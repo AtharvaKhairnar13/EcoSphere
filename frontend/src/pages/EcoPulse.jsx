@@ -1,96 +1,101 @@
-import React, { useState ,useEffect} from 'react';
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
 import Sidebar from '../partials/Sidebar';
 import Header from '../partials/Header';
-import FilterButton from '../components/DropdownFilter';
-import Datepicker from '../components/Datepicker';
-import DashboardCard01 from '../partials/dashboard/DashboardCard01';
-import DashboardCard02 from '../partials/dashboard/DashboardCard02';
-import DashboardCard03 from '../partials/dashboard/DashboardCard03';
-import DashboardCard04 from '../partials/dashboard/DashboardCard04';
-import DashboardCard05 from '../partials/dashboard/DashboardCard05';
-import DashboardCard06 from '../partials/dashboard/DashboardCard06';
-import DashboardCard07 from '../partials/dashboard/DashboardCard07';
-import DashboardCard08 from '../partials/dashboard/DashboardCard08';
-import DashboardCard09 from '../partials/dashboard/DashboardCard09';
-import DashboardCard10 from '../partials/dashboard/DashboardCard10';
-import DashboardCard11 from '../partials/dashboard/DashboardCard11';
-import DashboardCard12 from '../partials/dashboard/DashboardCard12';
-import DashboardCard13 from '../partials/dashboard/DashboardCard13';
 import Banner from '../partials/Banner';
-import { HorizontalCard } from '../components/HorizontalCardPulse'; // Import the TestimonialCard
+import { HorizontalCard } from '../components/HorizontalCardPulse';
 import { NavbarWithSearch } from '../components/PostNavbar';
+import { useGetMyPostQuery } from "../features/api/apiSlices/postApiSlice";
+import axios from 'axios';
+
 export const EcoPulse = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const [posts, setPosts] = useState([]);
-    
-  
+    const [posts, setPosts] = useState([]); // Stores all posts
+    const [filteredPosts, setFilteredPosts] = useState([]); // Stores either all posts or user-specific posts
+    const [showMyPosts, setShowMyPosts] = useState(false); // Toggle between all posts and user-specific posts
+
+    const token = localStorage.getItem("authToken"); // Assuming your token is stored here
+
+    // Get user-specific posts using the API slice hook
+    const { data: myPosts, isLoading: myPostsLoading, error: myPostsError } = useGetMyPostQuery();
+
+    // Fetch all posts initially
     useEffect(() => {
-        // Fetch posts data from API
         const fetchPosts = async () => {
             try {
                 const response = await axios.get('http://localhost:3000/api/v1/posts/all', {
-                    withCredentials: true, // Make sure cookies are sent with the request
+                    withCredentials: true, // Ensure cookies are sent
                 });
-        
                 setPosts(response.data);
+                setFilteredPosts(response.data);
             } catch (error) {
                 console.error("Error fetching posts: ", error);
             }
         };
-        
-
         fetchPosts();
     }, []);
 
+    // Function to toggle between all posts and my posts
+    const handleTogglePosts = (showMyPosts) => {
+        if (showMyPosts) {
+            if (myPostsLoading) return; // Wait if myPosts data is still loading
+            if (myPostsError) {
+                console.error("Error fetching my posts: ", myPostsError);
+                return;
+            }
+            setFilteredPosts(myPosts || []); // Set filtered posts to user-specific posts
+        } else {
+            setFilteredPosts(posts); // Set filtered posts back to all posts
+        }
+        setShowMyPosts(showMyPosts);
+    };
+
     return (
         <div className="flex h-screen overflow-hidden">
-
             {/* Sidebar */}
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
             {/* Content area */}
             <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
-
                 {/* Site header */}
                 <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
                 <main className="grow">
                     <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
-
                         {/* Dashboard actions */}
-                        {/* Dashboard actions */}
-<div className="sm:flex sm:flex-col sm:justify-between sm:items-start mb-12"> {/* Adjusted for vertical stacking */}
-  
-  {/* Left: Title */}
-  <div className="mb-4 sm:mb-6"> {/* Increased margin-bottom */}
-    <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">EcoPulse</h1>
-  </div>
+                        <div className="sm:flex sm:flex-col sm:justify-between sm:items-start mb-12">
+                            {/* Left: Title */}
+                            <div className="mb-4 sm:mb-6">
+                                <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">
+                                    EcoPulse
+                                </h1>
+                            </div>
 
-  {/* Navbar */}
-  <NavbarWithSearch />
-</div>
-
+                            {/* Navbar */}
+                            <NavbarWithSearch
+                                onShowMyPosts={() => handleTogglePosts(true)} // Show user-specific posts
+                                onShowAllPosts={() => handleTogglePosts(false)} // Show all posts
+                            />
+                        </div>
 
                         {/* Cards */}
                         <div className="grid grid-cols-1 gap-6">
-  {posts.map((post) => (
-    <div key={post._id} className="w-full">
-      <HorizontalCard post={post} />
-    </div>
-  ))}
-</div>
-
-                       
-
+                            {showMyPosts && myPostsLoading ? (
+                                <div>Loading My Posts...</div>
+                            ) : filteredPosts.length > 0 ? (
+                                filteredPosts.map((post) => (
+                                    <div key={post._id} className="w-full">
+                                        <HorizontalCard post={post} showDeleteButton={showMyPosts}/>
+                                    </div>
+                                ))
+                            ) : (
+                                <div>No posts to display.</div>
+                            )}
+                        </div>
                     </div>
                 </main>
 
                 <Banner />
-
             </div>
         </div>
     );
 };
-
-

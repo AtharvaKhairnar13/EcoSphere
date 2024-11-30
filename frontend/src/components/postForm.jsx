@@ -11,7 +11,6 @@ import { toast } from "react-toastify";
 import { useAddPostMutation } from "../features/api/apiSlices/postApiSlice"; // Import the mutation hook
 import { useDispatch } from "react-redux";
 import { updateLoader } from "../features/loader/loaderSlice";
-
 export function MessageDialog() {
   const [open, setOpen] = useState(false);
   const [message, setMessage] = useState("");

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Card, CardBody, Typography, IconButton } from "@material-tailwind/react";
 import { formatDistanceToNow, formatDistanceToNowStrict } from "date-fns";
 import { useLikePostMutation } from "../features/api/apiSlices/postApiSlice"; // Import the useLikePostMutation hook
-import profileimage from "../assets/profile_logo.png"
 export function HorizontalCard({ post }) {
   const [isClicked, setIsClicked] = useState(false);
   const [likePost] = useLikePostMutation(); // Hook to trigger the like post mutation
@@ -43,7 +42,7 @@ export function HorizontalCard({ post }) {
               {/* Placeholder for profile image */}
               <img
                 className="rounded-full"
-                src={post.user?.profileImage || profileimage} // Dynamically set the user image here
+                src={post.user?.profileImage || ""} // Dynamically set the user image here
                 width="40"
                 height="40"
                 alt="author"

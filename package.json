@@ -12,6 +12,7 @@
     "json-server": "npx json-server frontend/src/components/EcoPolicy/db.json --port 4000"
   },
   "devDependencies": {
+    "@tailwindcss/line-clamp": "^0.4.4",
     "concurrently": "^8.2.2"
   }
 }

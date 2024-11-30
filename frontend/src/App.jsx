@@ -47,6 +47,9 @@ import NotFound from "./pages/NotFound.jsx";
 import TermsAndConditions from "./pages/TermsandCondition.jsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
 import ProfileSettings from "./pages/ProfilePage.jsx";
+import EcoLearnVideo from "./components/EcoLearn/EcoLearnVideo.jsx";
+import EcoLearnCourses from "./components/EcoLearn/EcoLearnCourses.jsx"
+import EcoLearnArticles from "./components/EcoLearn/EcoLearnArticles.jsx"
 
 function App() {
   const location = useLocation();
@@ -86,6 +89,9 @@ function App() {
         <Route path="/dashboard" element={<ProtectedRoutes />}>
           <Route index element={<Dashboard />} />
           <Route path="eco-learn" element={<EcoLearn />} />
+          <Route path="eco-learn/video" element={<EcoLearnVideo />} />
+          <Route path="eco-learn/courses" element={<EcoLearnCourses />} />
+          <Route path="eco-learn/articles" element={<EcoLearnArticles />} />
           <Route path="eco-lab" element={<EcoLab />} />
           <Route path="eco-lab/details" element={<DetailPage />} />
           <Route path="eco-games" element={<EcoGames />} />

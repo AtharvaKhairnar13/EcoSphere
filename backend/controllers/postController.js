@@ -262,6 +262,7 @@ export const getPostsGroupedByCountry = async (req, res) => {
               $cond: [{ $eq: ['$sentiment', 'neutral'] }, 1, 0],
             },
           },
+          vector: { $first: '$vector' }, // Extract the first vector element (assuming all documents have the same vector length)
         },
       },
       {
@@ -286,18 +287,17 @@ export const getPostsGroupedByCountry = async (req, res) => {
               },
             ],
           },
-          // Adding trending topics based on the highest valued vector indices
           trendingTopics: {
             $map: {
-              input: { $range: [0, 10] },
+              input: { $range: [0, { $size: '$vector' }] },
               as: 'index',
               in: {
-                topic: { $arrayElemAt: [climateClasses, '$$index'] },
+                topic: { $arrayElemAt: [["Flood", "Drought", "Cyclone", "Wildfire", "Heatwave", "SeaLevelRise", "environment", "climate", "energy", "policy"], '$$index'] },
                 value: {
                   $cond: {
                     if: { $gt: [{ $arrayElemAt: ['$vector', '$$index'] }, null] },
                     then: { $arrayElemAt: ['$vector', '$$index'] },
-                    else: 0, // Default to 0 if the value is null
+                    else: 0,
                   },
                 },
               },
@@ -317,7 +317,8 @@ export const getPostsGroupedByCountry = async (req, res) => {
       },
     ]);
 
-    console.log(result);
+    console.log("Classes:" + climateClasses);
+    console.log("Result:" + result);
     res.status(200).json(result);
   } catch (err) {
     console.error('Error grouping posts by country:', err);

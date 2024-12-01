@@ -15,9 +15,7 @@ const Map = ({ countriesData }) => {
   const [hoveredCountry, setHoveredCountry] = useState(null);
 
   // Effect to log countries data when it's received (for debugging)
-  useEffect(() => {
-    
-  }, [countriesData]);
+  
 
   return (
     <div className="flex justify-center items-center m-0 p-6">

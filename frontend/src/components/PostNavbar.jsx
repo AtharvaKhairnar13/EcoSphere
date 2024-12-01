@@ -8,17 +8,18 @@ import {
   Input,
 } from "@material-tailwind/react";
 import { MessageDialog } from "./postForm";
-
-export function NavbarWithSearch({ onShowMyPosts, onShowAllPosts }) {
+import Map from "./EcoPulse/map";
+export function NavbarWithSearch({ onShowMyPosts, onShowAllPosts,onShowMap }) {
   const [openNav, setOpenNav] = React.useState(false);
   const [openDialog, setOpenDialog] = React.useState(false);
+  
   React.useEffect(() => {
     window.addEventListener(
       "resize",
       () => window.innerWidth >= 960 && setOpenNav(false),
     );
   }, []);
- 
+  const toggleMapDialog = () => setIsMapDialogOpen(!isMapDialogOpen);
   const navList = (
     <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
       
@@ -77,7 +78,7 @@ export function NavbarWithSearch({ onShowMyPosts, onShowAllPosts }) {
  
   return (
     <Navbar 
-        className="mx-auto max-w-screen-xl px-4 py-2 lg:px-8 lg:py-4 border-none shadow:0"
+        className="mx-auto max-w-screen-l px-4 py-2 lg:px-8 lg:py-4 border-none shadow:0"
         style={{
             
             backgroundColor: 'rgba(55, 193, 94, 0.7)', // Apply the color with transparency
@@ -88,7 +89,7 @@ export function NavbarWithSearch({ onShowMyPosts, onShowAllPosts }) {
       <div className="flex justify-between items-center">
       <button onClick={onShowAllPosts} className="btn bg-transparent h-auto shadow-none">All Posts</button>
       <button onClick={onShowMyPosts} className="btn bg-transparent h-auto shadow-none">My Posts</button>
-
+      <button onClick={onShowMap} className="btn bg-transparent h-auto shadow-none">Country</button>
       {/* Add search or other navbar elements here */}
     </div>
         <div className="hidden items-center gap-x-2 lg:flex">

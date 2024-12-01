@@ -1,12 +1,36 @@
 import React, { useState } from "react";
-
+import { useAddCampaignMutation } from "../../features/api/apiSlices/campaignApiSlice";
 const CampaignForm = ({ selectedCountry }) => {
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
+  const [addCampaign, { isLoading, isError, isSuccess, error }] = useAddCampaignMutation();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert(`Campaign started for ${selectedCountry}!`);
+
+    // Validate inputs
+    if (!subject || !message || !selectedCountry) {
+      alert("Please fill in all fields.");
+      return;
+    }
+
+    try {
+      // Call the API to create a new campaign
+      const newCampaign = {
+        name: subject,
+        country: selectedCountry,
+    
+      };
+
+      await addCampaign(newCampaign).unwrap(); // Unwrap handles the promise
+      alert(`Campaign successfully created for ${selectedCountry}!`);
+      
+      // Reset form fields
+      setSubject("");
+      setMessage("");
+    } catch (err) {
+      console.error("Failed to create campaign:", err);
+    }
   };
 
   return (
@@ -44,11 +68,19 @@ const CampaignForm = ({ selectedCountry }) => {
 
         <button
           type="submit"
-          className="w-full bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600"
+          className="w-full bg-green-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-green-600 disabled:opacity-50"
+          disabled={isLoading}
         >
-          Start Campaign
+          {isLoading ? "Starting..." : "Start Campaign"}
         </button>
       </form>
+
+      {isSuccess && <p className="mt-4 text-green-600">Campaign created successfully!</p>}
+      {isError && (
+        <p className="mt-4 text-red-600">
+          Failed to create campaign: {error?.data?.error || "Unknown error"}
+        </p>
+      )}
     </section>
   );
 };

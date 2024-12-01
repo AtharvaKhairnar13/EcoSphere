@@ -2,6 +2,7 @@ import Post from "../models/postModel.js";
 import asyncHandler from '../middlewares/asyncHandler.js';
 import User from "../models/userModel.js";
 import queryHuggingFace from "../utils/postUtils.js";
+import SentimentHuggingFace from "../utils/postSenti.js";
 
 // In utils/similarityUtils.js
 export const calculateCosineSimilarity = (vector1, vector2) => {
@@ -10,6 +11,9 @@ export const calculateCosineSimilarity = (vector1, vector2) => {
   const magnitude2 = Math.sqrt(vector2.reduce((acc, value) => acc + value * value, 0));
   return dotProduct / (magnitude1 * magnitude2); // Cosine similarity formula
 };
+function removeEmojis(text) {
+  return text.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]|[^\x00-\x7F]/g, '');
+}
 
 
 // Controller to get all posts
@@ -64,7 +68,8 @@ export const getMyPosts = async (req, res) => {
           return res.status(404).json({ error: "User not found." });
       }
       const userId = user._id;
-      const posts = await Post.find({ user: userId });
+      const posts = await Post.find({ user: userId }).populate("user", "username email")
+      .exec();
       return res.status(200).json(posts);
   } catch (err) {
       console.error(err);
@@ -73,42 +78,55 @@ export const getMyPosts = async (req, res) => {
 };
 
 
+
 export const createPost = asyncHandler(async (req, res) => {
   try {
     const { message } = req.body;
-    const userEmail = req.userEmail;
+    const userEmail = req.userEmail;  // Assuming req.userEmail is set from authentication middleware
 
     // Ensure message and user are present
     if (!message || !userEmail) {
       return res.status(400).json({ error: "Missing message or userEmail" });
     }
 
-    // Fetch the user from the database using the email or userId
+    // Fetch the user from the database using the email
     const user = await User.findOne({ email: userEmail });
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Fetch vector from Hugging Face model
-    const analysisResult = await queryHuggingFace(message);
-    
-    // Extract only the scores from the result
-    const vector = analysisResult.map((item) => item.score);  // Extract the scores
+    // Clean message from emojis
+    const cleanedMessage = removeEmojis(message);
 
-    // Sentiment analysis (if needed)
-    let sentiment = "neutral";  // Default value
-    // Optionally, you could analyze sentiment using a function here
-    // Example: sentiment = analyzeSentiment(message);
+    // Fetch vector (an array of scores) from Hugging Face model
+    const analysisResult = await queryHuggingFace(cleanedMessage);
+    if (!analysisResult) {
+      return res.status(500).json({ error: "Failed to analyze message vector" });
+    }
+    
+    // Extract only the scores from the analysis result
+    const vector = analysisResult.map((item) => item.score);  // Assuming 'score' is the field containing the vector values
+
+    // Perform sentiment analysis using SentimentHuggingFace
+    const sentimentResult = await SentimentHuggingFace(cleanedMessage);
+    if (!sentimentResult) {
+      return res.status(500).json({ error: "Sentiment analysis failed" });
+    }
+
+    // Extract the sentiment label ("positive", "negative", or "neutral")
+    const sentiment = sentimentResult === 'positive' || sentimentResult === 'negative'
+      ? sentimentResult
+      : 'neutral'; // Default to 'neutral' if not positive or negative
 
     // Create the new post
     const newPost = new Post({
-      postId: new Date().toISOString(),
-      user: user._id,
+      postId: new Date().toISOString(), // Using ISO string as unique postId
+      user: user._id,  // Use user._id as reference to the User model
       content: message,
-      vector, // The vector generated from message (only the scores)
-      sentiment, // The sentiment of the message
-      likesCount: 0,
-      date: new Date(),
+      vector, // Vector derived from Hugging Face analysis
+      sentiment, // Sentiment of the message
+      likesCount: 0,  // Initial likes count
+      date: new Date(),  // Date when post is created
     });
 
     // Save the post to the database
@@ -201,5 +219,108 @@ export const deletePost = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Failed to delete the post." });
+  }
+};
+
+
+export const getPostsGroupedByCountry = async (req, res) => {
+  try {
+    const country = req.query.country;
+    const climateClasses = process.env.CLIMATE_CLASSES.split(',');
+
+    const result = await Post.aggregate([
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'userDetails',
+        },
+      },
+      {
+        $unwind: '$userDetails',
+      },
+      {
+        $match: { 'userDetails.country': country },
+      },
+      {
+        $group: {
+          _id: '$userDetails.country',
+          posts: { $push: '$$ROOT' },
+          positiveSentimentCount: {
+            $sum: {
+              $cond: [{ $eq: ['$sentiment', 'positive'] }, 1, 0],
+            },
+          },
+          negativeSentimentCount: {
+            $sum: {
+              $cond: [{ $eq: ['$sentiment', 'negative'] }, 1, 0],
+            },
+          },
+          neutralSentimentCount: {
+            $sum: {
+              $cond: [{ $eq: ['$sentiment', 'neutral'] }, 1, 0],
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          country: '$_id',
+          posts: 1,
+          sentimentScores: {
+            positive: '$positiveSentimentCount',
+            negative: '$negativeSentimentCount',
+            neutral: '$neutralSentimentCount',
+          },
+          overallSentiment: {
+            $cond: [
+              { $gt: ['$positiveSentimentCount', '$negativeSentimentCount'] },
+              'positive',
+              {
+                $cond: [
+                  { $gt: ['$negativeSentimentCount', '$positiveSentimentCount'] },
+                  'negative',
+                  'neutral',
+                ],
+              },
+            ],
+          },
+          // Adding trending topics based on the highest valued vector indices
+          trendingTopics: {
+            $map: {
+              input: { $range: [0, 10] },
+              as: 'index',
+              in: {
+                topic: { $arrayElemAt: [climateClasses, '$$index'] },
+                value: {
+                  $cond: {
+                    if: { $gt: [{ $arrayElemAt: ['$vector', '$$index'] }, null] },
+                    then: { $arrayElemAt: ['$vector', '$$index'] },
+                    else: 0, // Default to 0 if the value is null
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          trendingTopics: {
+            $slice: [
+              { $sortArray: { input: '$trendingTopics', sortBy: { value: -1 } } },
+              3, // Number of top topics to return
+            ],
+          },
+        },
+      },
+    ]);
+
+    console.log(result);
+    res.status(200).json(result);
+  } catch (err) {
+    console.error('Error grouping posts by country:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 };

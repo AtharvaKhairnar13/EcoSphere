@@ -6,18 +6,22 @@ import { HorizontalCard } from '../components/HorizontalCardPulse';
 import { NavbarWithSearch } from '../components/PostNavbar';
 import { useGetMyPostQuery } from "../features/api/apiSlices/postApiSlice";
 import axios from 'axios';
-
+import Map from '../components/EcoPulse/map';
+import { useGetPostsGroupedByCountryQuery } from '../features/api/apiSlices/postApiSlice';
 export const EcoPulse = () => {
+
+
+    
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [posts, setPosts] = useState([]); // Stores all posts
     const [filteredPosts, setFilteredPosts] = useState([]); // Stores either all posts or user-specific posts
     const [showMyPosts, setShowMyPosts] = useState(false); // Toggle between all posts and user-specific posts
-
-    const token = localStorage.getItem("authToken"); // Assuming your token is stored here
-
+    const [showMap, setshowMap] = useState(false);
+    const [countriesData, setCountriesData] = useState([]);
     // Get user-specific posts using the API slice hook
     const { data: myPosts, isLoading: myPostsLoading, error: myPostsError } = useGetMyPostQuery();
-
+    const { data: countryData, isLoading: countryDataLoading, error: countryDataError } = useGetPostsGroupedByCountryQuery();
+    console.log("data"+countryData);
     // Fetch all posts initially
     useEffect(() => {
         const fetchPosts = async () => {
@@ -34,6 +38,7 @@ export const EcoPulse = () => {
         fetchPosts();
     }, []);
 
+    
     // Function to toggle between all posts and my posts
     const handleTogglePosts = (showMyPosts) => {
         if (showMyPosts) {
@@ -47,6 +52,9 @@ export const EcoPulse = () => {
             setFilteredPosts(posts); // Set filtered posts back to all posts
         }
         setShowMyPosts(showMyPosts);
+    };
+    const handleDialogMap=(showMap) => {
+        setshowMap(showMap)
     };
 
     return (
@@ -66,16 +74,29 @@ export const EcoPulse = () => {
                             {/* Left: Title */}
                             <div className="mb-4 sm:mb-6">
                                 <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">
-                                    EcoPulse
+                                {showMyPosts ? "MY POSTS" : "ALL POSTS"}
                                 </h1>
                             </div>
-
-                            {/* Navbar */}
+                            
+                                                        {/* Navbar */}
                             <NavbarWithSearch
                                 onShowMyPosts={() => handleTogglePosts(true)} // Show user-specific posts
-                                onShowAllPosts={() => handleTogglePosts(false)} // Show all posts
+                                onShowAllPosts={() => handleTogglePosts(false)}
+                                onShowMap={() => handleDialogMap(!showMap)} // Show all posts
                             />
                         </div>
+                        {showMap && (
+                            <div className="flex-1 md:mr-1">
+                                {/* Display loading spinner if country data is still loading */}
+                                {countryDataLoading ? (
+                                    <div>Loading country data...</div>
+                                ) : countryDataError ? (
+                                    <div>Error fetching country data.</div>
+                                ) : (
+                                    <Map countriesData={countryData} />
+                                )}
+                            </div>
+                        )}
 
                         {/* Cards */}
                         <div className="grid grid-cols-1 gap-6">

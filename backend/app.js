@@ -9,7 +9,7 @@ import connectDB from "./config/db.js";
 import asyncHandler from "./middlewares/asyncHandler.js";
 import Post from "./models/postModel.js"; // Assuming you have a `Post` model
 import postRoutes from "./routes/postRoute.js"
-
+import campaignRoute from "./routes/campaignRoute.js"
 // env variables configuration
 dotenv.config();
 
@@ -33,7 +33,8 @@ app.use(
 );
 
 app.use("/api/v1/users", userRoute);
-app.use("/api/v1/posts", postRoutes); // Use the posts routes
+app.use("/api/v1/posts", postRoutes);
+app.use("/api/v1/campaigns", campaignRoute); // Use the posts routes
 
 // News API integration
 const NEWS_API_KEY = process.env.NEWS_API_KEY; // Store your News API key in an environment variable

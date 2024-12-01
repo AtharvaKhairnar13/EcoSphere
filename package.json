@@ -1,9 +1,13 @@
 {
   "dependencies": {
     "@reduxjs/toolkit": "^2.3.0",
+    "d3": "^7.9.0",
+    "datamaps": "^0.5.9",
     "jwt-decode": "^4.0.0",
     "react-redux": "^9.1.2",
     "react-simple-maps": "^3.0.0",
+    "svg-country-flags": "^1.2.10",
+    "topojson": "^3.0.2",
     "yup": "^1.4.0"
   },
   "scripts": {

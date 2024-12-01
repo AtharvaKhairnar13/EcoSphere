@@ -50,7 +50,7 @@ import ProfileSettings from "./pages/ProfilePage.jsx";
 import EcoLearnVideo from "./components/EcoLearn/EcoLearnVideo.jsx";
 import EcoLearnCourses from "./components/EcoLearn/EcoLearnCourses.jsx"
 import EcoLearnArticles from "./components/EcoLearn/EcoLearnArticles.jsx"
-
+import EcoPulse2 from "./pages/EcoPulse2.jsx";
 function App() {
   const location = useLocation();
 

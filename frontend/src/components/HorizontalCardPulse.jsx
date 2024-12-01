@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Card, CardBody, Typography, IconButton } from "@material-tailwind/react";
 import { formatDistanceToNow, formatDistanceToNowStrict } from "date-fns";
 import { useLikePostMutation ,  useDeletePostMutation } from "../features/api/apiSlices/postApiSlice";
+import profileLogo from "../assets/profilelogo.png";
  // Import the useLikePostMutation hook
+import { toast } from "react-toastify";
 export function HorizontalCard({ post,showDeleteButton }) {
   const [isClicked, setIsClicked] = useState(false);
   const [likePost] = useLikePostMutation(); // Hook to trigger the like post mutation
@@ -49,7 +51,7 @@ export function HorizontalCard({ post,showDeleteButton }) {
           {/* Placeholder for profile image */}
           <img
             className="rounded-full"
-            src={post.user?.profileImage || ""}
+            src={post.user?.profileImage || profileLogo}
             width="40"
             height="40"
             alt="author"
@@ -147,7 +149,8 @@ export function HorizontalCard({ post,showDeleteButton }) {
                 onClick={async () => {
                   try {
                     await deletePost(post._id).unwrap();
-                    alert("Post deleted successfully.");
+                    
+                    window.location.reload();
                     setIsModalOpen(false);  // Close the modal after deletion
                   } catch (error) {
                     console.error("Error deleting post:", error);

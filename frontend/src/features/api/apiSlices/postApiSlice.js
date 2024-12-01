@@ -42,6 +42,12 @@ export const postApiSlice = apiSlice.injectEndpoints({
         body: { postId, isLiked }, // Include both postId and isLiked flag
       }),
     }),
+    getPostsGroupedByCountry: builder.query({
+      query: (country) => ({
+        url: `${POSTS_URL}/grouped-by-country${country ? `?country=${country}` : ''}`, // Add query string if country is provided
+        method: "GET",
+      }),
+    }),
     
   }),
 });
@@ -52,5 +58,6 @@ export const {
   useUpdatePostMutation,
   useDeletePostMutation,
   useGetMyPostQuery,
-  useLikePostMutation, // Export the useLikePostMutation hook
+  useLikePostMutation,
+  useGetPostsGroupedByCountryQuery, // Export the useLikePostMutation hook
 } = postApiSlice;

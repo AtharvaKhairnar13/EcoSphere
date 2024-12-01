@@ -4,7 +4,8 @@ import {
     createPost,
     likePost,
     getMyPosts,
-    deletePost
+    deletePost,
+    getPostsGroupedByCountry
 } from "../controllers/postController.js";
 import authenticateUser from "../middlewares/authenticateUser.js";
 const router = Router();
@@ -26,6 +27,6 @@ router.route("/my").get(authenticateUser, getMyPosts);
 // Route to delete a specific post by ID
 //router.delete("/:id", deletePost);
 router.route("/:id").delete(authenticateUser, deletePost);
-
+router.route("/grouped-by-country").get(authenticateUser, getPostsGroupedByCountry);
 
 export default router;

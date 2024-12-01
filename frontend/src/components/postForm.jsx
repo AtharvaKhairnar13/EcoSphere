@@ -41,15 +41,17 @@ export function MessageDialog() {
     try {
       dispatch(updateLoader(40));
       console.log("Message being sent:", message);
+      setOpen(false);
       const response = await addPost({ message }).unwrap(); // Call the mutation
       dispatch(updateLoader(70));
-
+      
       toast.success("Post added successfully!");
+      
       console.log("Post created:", response);
-
+      window.location.reload();
       // Reset dialog and input
       setMessage("");
-      setOpen(false);
+      
     } catch (error) {
       console.error("Error posting message:", error);
       toast.error(error?.data?.error || "Failed to add the post. Please try again.");
